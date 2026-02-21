@@ -25,11 +25,7 @@
 ## 安装
 
 ```bash
-# 创建虚拟环境（如已有可跳过）
-python3 -m venv myvenv
-
-# 安装
-./myvenv/bin/pip install -e .
+pip install -e .
 ```
 
 ## 首次使用
@@ -37,7 +33,7 @@ python3 -m venv myvenv
 ### 1. 环境检查
 
 ```bash
-./myvenv/bin/xpost check
+xpost check
 ```
 
 确认所有检查项为 ✅。如果辅助功能权限未通过，前往：
@@ -52,7 +48,7 @@ python3 -m venv myvenv
 
 ```bash
 # 先用预览模式启动 Chrome，手动登录
-./myvenv/bin/xpost post "test"
+xpost post "test"
 # 登录后关闭 Chrome 即可
 ```
 
@@ -64,23 +60,23 @@ python3 -m venv myvenv
 
 ```bash
 # 纯文本（注意：zsh 中 ! 是特殊字符，建议用单引号）
-./myvenv/bin/xpost post 'Hello world!'
+xpost post 'Hello world!'
 
 # 带图片（最多 4 张）
-./myvenv/bin/xpost post '看看这张照片' -i photo1.jpg -i photo2.png
+xpost post '看看这张照片' -i photo1.jpg -i photo2.png
 
 # 真正发布
-./myvenv/bin/xpost post '正式发布' -i image.jpg --submit
+xpost post '正式发布' -i image.jpg --submit
 ```
 
 ### 视频帖子
 
 ```bash
 # 预览
-./myvenv/bin/xpost video '精彩视频' -V clip.mp4
+xpost video '精彩视频' -V clip.mp4
 
 # 发布
-./myvenv/bin/xpost video '精彩视频' -V clip.mp4 --submit
+xpost video '精彩视频' -V clip.mp4 --submit
 ```
 
 支持格式：MP4、MOV、WebM
@@ -89,10 +85,10 @@ python3 -m venv myvenv
 
 ```bash
 # 预览
-./myvenv/bin/xpost quote 'https://x.com/user/status/123456' '好文推荐！'
+xpost quote 'https://x.com/user/status/123456' '好文推荐！'
 
 # 发布
-./myvenv/bin/xpost quote 'https://x.com/user/status/123456' '好文推荐！' --submit
+xpost quote 'https://x.com/user/status/123456' '好文推荐！' --submit
 ```
 
 ### X 长文（Article）
@@ -112,26 +108,26 @@ cover_image: ./cover.jpg
 
 ```bash
 # 预览
-./myvenv/bin/xpost article my-post.md
+xpost article my-post.md
 
 # 指定标题和封面
-./myvenv/bin/xpost article my-post.md --title '自定义标题' --cover hero.jpg
+xpost article my-post.md --title '自定义标题' --cover hero.jpg
 
 # 发布
-./myvenv/bin/xpost article my-post.md --submit
+xpost article my-post.md --submit
 ```
 
 ## 全局选项
 
 ```bash
 # 指定 Chrome 路径
-./myvenv/bin/xpost --chrome-path /path/to/chrome post 'text'
+xpost --chrome-path /path/to/chrome post 'text'
 
 # 指定 Profile 目录（多账号切换）
-./myvenv/bin/xpost --profile ~/.local/share/x-poster-account2 post 'text'
+xpost --profile ~/.local/share/x-poster-account2 post 'text'
 
 # 开启调试日志
-./myvenv/bin/xpost -v post 'text'
+xpost -v post 'text'
 ```
 
 ## 读取功能
@@ -140,10 +136,10 @@ cover_image: ./cover.jpg
 
 ```bash
 # 文本输出
-./myvenv/bin/xpost read 'https://x.com/user/status/123456'
+xpost read 'https://x.com/user/status/123456'
 
 # JSON 输出（适合程序处理）
-./myvenv/bin/xpost read 'https://x.com/user/status/123456' --json
+xpost read 'https://x.com/user/status/123456' --json
 ```
 
 输出内容包括：推文文本、作者、时间、图片/视频链接、互动数据（点赞/转发/回复/浏览量）、引用推文等。
@@ -152,13 +148,13 @@ cover_image: ./cover.jpg
 
 ```bash
 # 读取最近 10 条（默认）
-./myvenv/bin/xpost timeline '@elonmusk'
+xpost timeline '@elonmusk'
 
 # 读取最近 20 条
-./myvenv/bin/xpost timeline 'elonmusk' -n 20
+xpost timeline 'elonmusk' -n 20
 
 # JSON 输出
-./myvenv/bin/xpost timeline 'https://x.com/elonmusk' -n 5 --json
+xpost timeline 'https://x.com/elonmusk' -n 5 --json
 ```
 
 支持直接传 `@handle`、`handle` 或完整 URL。
@@ -167,13 +163,13 @@ cover_image: ./cover.jpg
 
 ```bash
 # 按相关度搜索（默认 Top）
-./myvenv/bin/xpost search 'Python programming' -n 5
+xpost search 'Python programming' -n 5
 
 # 按最新排序
-./myvenv/bin/xpost search '#AI' -n 20 --latest
+xpost search '#AI' -n 20 --latest
 
 # 搜索特定用户的推文
-./myvenv/bin/xpost search 'from:elonmusk' -n 10 --json
+xpost search 'from:elonmusk' -n 10 --json
 ```
 
 ## 多账号
@@ -182,10 +178,10 @@ cover_image: ./cover.jpg
 
 ```bash
 # 账号 A
-./myvenv/bin/xpost --profile ~/.x-poster/account-a post 'from A'
+xpost --profile ~/.x-poster/account-a post 'from A'
 
 # 账号 B
-./myvenv/bin/xpost --profile ~/.x-poster/account-b post 'from B'
+xpost --profile ~/.x-poster/account-b post 'from B'
 ```
 
 每个 profile 目录独立保存 Chrome 登录状态。
