@@ -1,13 +1,19 @@
 # xpost
 
-通过真实 Chrome 浏览器 + CDP（Chrome DevTools Protocol）发布 X (Twitter) 内容的命令行工具。
+通过真实 Chrome 浏览器 + CDP（Chrome DevTools Protocol）操作 X (Twitter) 的命令行工具。
 
-通过操控真实浏览器绕过 X 的反自动化检测，支持 4 种发帖模式：
+通过操控真实浏览器绕过 X 的反自动化检测，支持 7 种功能：
 
+**发布功能：**
 - **普通帖子** — 文本 + 最多 4 张图片
 - **视频帖子** — 文本 + 视频（MP4/MOV/WebM）
 - **引用推文** — 对已有推文添加评论转发
 - **X 长文** — 从 Markdown 文件发布长篇文章（需 X Premium）
+
+**读取功能：**
+- **读取推文** — 读取单条推文的完整内容和数据
+- **读取时间线** — 批量读取用户主页的推文
+- **搜索推文** — 按关键词搜索推文
 
 ## 环境要求
 
@@ -128,6 +134,48 @@ cover_image: ./cover.jpg
 ./myvenv/bin/xpost -v post 'text'
 ```
 
+## 读取功能
+
+### 读取单条推文
+
+```bash
+# 文本输出
+./myvenv/bin/xpost read 'https://x.com/user/status/123456'
+
+# JSON 输出（适合程序处理）
+./myvenv/bin/xpost read 'https://x.com/user/status/123456' --json
+```
+
+输出内容包括：推文文本、作者、时间、图片/视频链接、互动数据（点赞/转发/回复/浏览量）、引用推文等。
+
+### 读取用户时间线
+
+```bash
+# 读取最近 10 条（默认）
+./myvenv/bin/xpost timeline '@elonmusk'
+
+# 读取最近 20 条
+./myvenv/bin/xpost timeline 'elonmusk' -n 20
+
+# JSON 输出
+./myvenv/bin/xpost timeline 'https://x.com/elonmusk' -n 5 --json
+```
+
+支持直接传 `@handle`、`handle` 或完整 URL。
+
+### 搜索推文
+
+```bash
+# 按相关度搜索（默认 Top）
+./myvenv/bin/xpost search 'Python programming' -n 5
+
+# 按最新排序
+./myvenv/bin/xpost search '#AI' -n 20 --latest
+
+# 搜索特定用户的推文
+./myvenv/bin/xpost search 'from:elonmusk' -n 10 --json
+```
+
 ## 多账号
 
 通过不同的 `--profile` 目录实现多账号切换：
@@ -177,5 +225,8 @@ src/x_poster/
     ├── video.py           # 视频帖子
     ├── quote.py           # 引用推文
     ├── article.py         # X 长文
+    ├── read.py            # 读取单条推文
+    ├── timeline.py        # 读取用户时间线
+    ├── search.py          # 搜索推文
     └── check.py           # 环境检查
 ```

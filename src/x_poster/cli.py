@@ -1,7 +1,7 @@
 """
 CLI main entry point for x-poster.
 
-Registers all subcommands: post, video, quote, article, check.
+Registers all subcommands: post, video, quote, article, read, timeline, search, check.
 """
 
 from __future__ import annotations
@@ -42,10 +42,10 @@ def _setup_logging(verbose: bool) -> None:
 @click.option("-v", "--verbose", is_flag=True, help="Enable debug logging")
 @click.pass_context
 def cli(ctx: click.Context, profile: Optional[str], chrome_path: Optional[str], verbose: bool) -> None:
-    """xpost - Post to X (Twitter) via Chrome CDP protocol.
+    """xpost - Post to and read from X (Twitter) via Chrome CDP protocol.
 
     Uses a real Chrome browser with CDP to create posts, upload media,
-    quote tweets, and publish long-form articles on X.
+    quote tweets, publish long-form articles, and read tweets on X.
     """
     _setup_logging(verbose)
     ctx.ensure_object(dict)
@@ -58,12 +58,18 @@ from .commands.post import post
 from .commands.video import video
 from .commands.quote import quote
 from .commands.article import article
+from .commands.read import read_tweet
+from .commands.timeline import timeline
+from .commands.search import search
 from .commands.check import check
 
 cli.add_command(post)
 cli.add_command(video)
 cli.add_command(quote)
 cli.add_command(article)
+cli.add_command(read_tweet)
+cli.add_command(timeline)
+cli.add_command(search)
 cli.add_command(check)
 
 
