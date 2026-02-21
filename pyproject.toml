@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "x-poster"
+version = "0.1.0"
+description = "Post to X (Twitter) via real Chrome browser + CDP protocol"
+requires-python = ">=3.9"
+dependencies = [
+    "click>=8.0",
+    "websockets>=11.0",
+    "markdown>=3.4",
+    "Pygments>=2.15",
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+xpost = "x_poster.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
