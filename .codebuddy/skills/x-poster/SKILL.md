@@ -13,6 +13,7 @@ Provide the ability to post content to and read content from X (Twitter) using a
 
 Activate this skill when the user mentions any of the following:
 - Posting, tweeting, or publishing to X / Twitter
+- Replying to tweets
 - Reading, fetching, or scraping tweets
 - Browsing a user's Twitter/X timeline
 - Searching tweets on X
@@ -67,6 +68,7 @@ All publishing commands operate in **preview mode** by default (content is fille
 | `post <text>` | Post text + images | `-i <image>` (max 4), `--submit` |
 | `video <text> -V <path>` | Post text + video | `-V <video>` (required), `--submit` |
 | `quote <url> <text>` | Quote an existing tweet | `--submit` |
+| `reply <url> <text>` | Reply to a tweet | `--submit` |
 | `article <markdown>` | Publish long-form article | `--title`, `--cover <image>`, `--submit` |
 
 ### Reading Commands
@@ -112,7 +114,17 @@ xpost search 'keyword or phrase' -n 15 --latest --json
 
 When reading tweets for analysis, always use `--json` flag to get structured data that can be parsed programmatically.
 
-### Pattern 3: Quote Tweet with Commentary
+### Pattern 3: Reply to a Tweet
+
+```bash
+# Preview reply
+xpost reply 'https://x.com/user/status/123456' 'Great point!'
+
+# Submit reply
+xpost reply 'https://x.com/user/status/123456' 'Great point!' --submit
+```
+
+### Pattern 4: Quote Tweet with Commentary
 
 ```bash
 # First read the original tweet
@@ -122,7 +134,7 @@ xpost read 'https://x.com/user/status/123456'
 xpost quote 'https://x.com/user/status/123456' 'My commentary' --submit
 ```
 
-### Pattern 4: Publish an Article from Markdown
+### Pattern 5: Publish an Article from Markdown
 
 ```bash
 xpost article /path/to/article.md --title 'Article Title' --cover /path/to/cover.jpg --submit
@@ -130,7 +142,7 @@ xpost article /path/to/article.md --title 'Article Title' --cover /path/to/cover
 
 The Markdown file supports YAML frontmatter for `title`, `subtitle`, and `cover`.
 
-### Pattern 5: Multi-Account Operations
+### Pattern 6: Multi-Account Operations
 
 Use `--profile` to switch between accounts:
 

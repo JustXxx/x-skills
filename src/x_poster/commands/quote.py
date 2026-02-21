@@ -75,23 +75,41 @@ async def _click_quote_option(page: PageHelper, timeout: float = 10.0) -> None:
     start = time.monotonic()
 
     while (time.monotonic() - start) < timeout:
-        # Look for menu items in the dropdown
-        for pattern in QUOTE_PATTERNS:
-            found = await page.evaluate(
-                f"(() => {{"
-                f"  const items = document.querySelectorAll('[role=\"menuitem\"] span, [data-testid=\"Dropdown\"] span');"
-                f"  for (const item of items) {{"
-                f"    if (item.textContent && item.textContent.toLowerCase().includes('{pattern.lower()}')) {{"
-                f"      item.closest('[role=\"menuitem\"]') ? item.closest('[role=\"menuitem\"]').click() : item.click();"
-                f"      return true;"
-                f"    }}"
-                f"  }}"
-                f"  return false;"
-                f"}})()"
-            )
-            if found:
-                logger.debug("Clicked quote option (matched: %s)", pattern)
-                return
+        # Look for menu items in the dropdown (try multiple selector strategies)
+        found = await page.evaluate(
+            """(() => {
+                const patterns = """
+            + repr([p.lower() for p in QUOTE_PATTERNS])
+            + """;
+                // Strategy 1: role=menuitem
+                const items = document.querySelectorAll('[role="menuitem"]');
+                for (const item of items) {
+                    const text = (item.textContent || '').trim().toLowerCase();
+                    for (const p of patterns) {
+                        if (text.includes(p)) {
+                            item.click();
+                            return 'menuitem:' + text;
+                        }
+                    }
+                }
+                // Strategy 2: spans inside #layers with matching text
+                const spans = document.querySelectorAll('#layers span');
+                for (const span of spans) {
+                    const text = (span.textContent || '').trim().toLowerCase();
+                    for (const p of patterns) {
+                        if (text === p) {
+                            const clickTarget = span.closest('[role="menuitem"]') || span;
+                            clickTarget.click();
+                            return 'span:' + text;
+                        }
+                    }
+                }
+                return false;
+            })()"""
+        )
+        if found:
+            logger.debug("Clicked quote option (matched: %s)", found)
+            return
 
         await asyncio.sleep(0.3)
 
@@ -143,15 +161,34 @@ async def _run_quote(
 
         await asyncio.sleep(1.0)
 
-        # Click retweet button
+        # Click retweet button to open dropdown
         click.echo("🔁 Opening retweet menu...")
+        rt_selector = RETWEET_BUTTON + ", " + UNRETWEET_BUTTON
+        # Try CDP mouse click first, then JS click as fallback
         try:
             await page.click_selector(RETWEET_BUTTON)
         except (TimeoutError, RuntimeError):
-            # May already be retweeted, try unretweet button
-            await page.click_selector(UNRETWEET_BUTTON)
+            try:
+                await page.click_selector(UNRETWEET_BUTTON)
+            except (TimeoutError, RuntimeError):
+                pass
 
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(0.8)
+
+        # Check if dropdown appeared; if not, retry with JS click
+        has_menu = await page.evaluate(
+            'document.querySelectorAll(\'[role="menuitem"]\').length > 0'
+        )
+        if not has_menu:
+            logger.debug("CDP click didn't open dropdown, retrying with JS click")
+            await page.evaluate("""
+                (() => {
+                    const btn = document.querySelector('[data-testid="retweet"]')
+                             || document.querySelector('[data-testid="unretweet"]');
+                    if (btn) btn.click();
+                })()
+            """)
+            await asyncio.sleep(0.8)
 
         # Select Quote from dropdown
         click.echo("💬 Selecting 'Quote'...")
@@ -170,8 +207,19 @@ async def _run_quote(
         # Submit or preview
         if submit:
             click.echo("📤 Submitting quote...")
-            await page.click_selector('[data-testid="tweetButton"]')
-            await asyncio.sleep(2.0)
+            # Try CDP click first, then JS click as fallback
+            try:
+                await page.click_selector('[data-testid="tweetButton"]')
+            except (TimeoutError, RuntimeError):
+                logger.debug("CDP click on tweet button failed, using JS click")
+                await page.evaluate("""
+                    (() => {
+                        const btn = document.querySelector('[data-testid="tweetButton"]')
+                                 || document.querySelector('[data-testid="tweetButtonInline"]');
+                        if (btn) btn.click();
+                    })()
+                """)
+            await asyncio.sleep(3.0)
             click.echo("✅ Quote tweet submitted!")
         else:
             click.echo(

@@ -2,12 +2,13 @@
 
 通过真实 Chrome 浏览器 + CDP（Chrome DevTools Protocol）操作 X (Twitter) 的命令行工具。
 
-通过操控真实浏览器绕过 X 的反自动化检测，支持 7 种功能：
+通过操控真实浏览器绕过 X 的反自动化检测，支持 8 种功能：
 
 **发布功能：**
 - **普通帖子** — 文本 + 最多 4 张图片
 - **视频帖子** — 文本 + 视频（MP4/MOV/WebM）
 - **引用推文** — 对已有推文添加评论转发
+- **回复推文** — 对已有推文发表回复
 - **X 长文** — 从 Markdown 文件发布长篇文章（需 X Premium）
 
 **读取功能：**
@@ -89,6 +90,16 @@ xpost quote 'https://x.com/user/status/123456' '好文推荐！'
 
 # 发布
 xpost quote 'https://x.com/user/status/123456' '好文推荐！' --submit
+```
+
+### 回复推文
+
+```bash
+# 预览
+xpost reply 'https://x.com/user/status/123456' '说得好！'
+
+# 发布
+xpost reply 'https://x.com/user/status/123456' '说得好！' --submit
 ```
 
 ### X 长文（Article）
@@ -220,6 +231,7 @@ src/x_poster/
     ├── post.py            # 普通帖子
     ├── video.py           # 视频帖子
     ├── quote.py           # 引用推文
+    ├── reply.py           # 回复推文
     ├── article.py         # X 长文
     ├── read.py            # 读取单条推文
     ├── timeline.py        # 读取用户时间线

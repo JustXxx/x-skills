@@ -57,6 +57,7 @@ def cli(ctx: click.Context, profile: Optional[str], chrome_path: Optional[str], 
 from .commands.post import post
 from .commands.video import video
 from .commands.quote import quote
+from .commands.reply import reply
 from .commands.article import article
 from .commands.read import read_tweet
 from .commands.timeline import timeline
@@ -66,6 +67,7 @@ from .commands.check import check
 cli.add_command(post)
 cli.add_command(video)
 cli.add_command(quote)
+cli.add_command(reply)
 cli.add_command(article)
 cli.add_command(read_tweet)
 cli.add_command(timeline)

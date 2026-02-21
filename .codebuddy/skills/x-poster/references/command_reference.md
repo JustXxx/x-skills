@@ -86,6 +86,24 @@ cover: /path/to/cover.jpg
 ---
 ```
 
+### `xpost reply` — Reply to Tweet
+
+```
+xpost reply <tweet_url> <text> [--submit]
+```
+
+| Argument/Option | Description |
+|----------------|-------------|
+| `tweet_url` | URL of the tweet to reply to |
+| `text` | Reply text content |
+| `--submit` | Actually publish |
+
+**Examples:**
+```bash
+xpost reply 'https://x.com/user/status/123' 'Great thread!'
+xpost reply 'https://x.com/user/status/123' 'Interesting' --submit
+```
+
 ---
 
 ## Reading Commands
