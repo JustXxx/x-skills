@@ -46,7 +46,7 @@ else
     exit 1
 fi
 
-# Step 3: Run environment check
+# Step 4: Run environment check
 echo ""
 echo "🔍 Running environment check..."
 xpost check 2>&1

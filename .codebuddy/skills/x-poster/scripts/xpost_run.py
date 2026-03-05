@@ -35,7 +35,7 @@ def find_xpost_binary() -> str:
 def main():
     if len(sys.argv) < 2:
         print("Usage: python3 xpost_run.py <command> [args...]")
-        print("Commands: post, video, quote, article, read, timeline, search, check")
+        print("Commands: post, video, quote, reply, article, read, timeline, search, check")
         sys.exit(1)
 
     try:

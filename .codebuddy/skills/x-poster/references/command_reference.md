@@ -24,14 +24,14 @@ x-poster (`xpost`) is a CLI tool that controls X (Twitter) through a real Chrome
 ### `xpost post` — Text + Image Post
 
 ```
-xpost post <text> [-i <image>]... [--submit]
+xpost post <text> [-i <image>]... [-s/--submit]
 ```
 
 | Argument/Option | Description |
 |----------------|-------------|
 | `text` | Tweet text content |
 | `-i / --image <path>` | Image file path (max 4, repeat for multiple) |
-| `--submit` | Actually publish (default: preview only) |
+| `-s/--submit` | Actually publish (default: preview only) |
 
 **Examples:**
 ```bash
@@ -43,39 +43,57 @@ xpost post 'Publish it' --submit
 ### `xpost video` — Video Post
 
 ```
-xpost video <text> -V <video_path> [--submit]
+xpost video <text> -V <video_path> [-s/--submit]
 ```
 
 | Argument/Option | Description |
 |----------------|-------------|
 | `text` | Tweet text content |
 | `-V / --video <path>` | Video file path (MP4/MOV/WebM, required) |
-| `--submit` | Actually publish |
+| `-s/--submit` | Actually publish |
 
 ### `xpost quote` — Quote Tweet
 
 ```
-xpost quote <tweet_url> <text> [--submit]
+xpost quote <tweet_url> <text> [-s/--submit]
 ```
 
 | Argument/Option | Description |
 |----------------|-------------|
 | `tweet_url` | URL of the tweet to quote |
 | `text` | Quote comment text |
-| `--submit` | Actually publish |
+| `-s/--submit` | Actually publish |
+
+### `xpost reply` — Reply to Tweet
+
+```
+xpost reply <tweet_url> <text> [-s/--submit]
+```
+
+| Argument/Option | Description |
+|----------------|-------------|
+| `tweet_url` | URL of the tweet to reply to |
+| `text` | Reply text content |
+| `-s/--submit` | Actually publish |
+
+**Examples:**
+```bash
+xpost reply 'https://x.com/user/status/123' 'Great thread!'
+xpost reply 'https://x.com/user/status/123' 'Interesting' --submit
+```
 
 ### `xpost article` — Long-form Article
 
 ```
-xpost article <markdown_file> [--title <title>] [--cover <image>] [--submit]
+xpost article <markdown_file> [--title <title>] [--cover <image>] [-s/--submit]
 ```
 
 | Argument/Option | Description |
 |----------------|-------------|
 | `markdown_file` | Path to Markdown file |
-| `--title <text>` | Article title (overrides frontmatter) |
+| `-t/--title <text>` | Article title (overrides frontmatter) |
 | `--cover <image>` | Cover image path |
-| `--submit` | Actually publish |
+| `-s/--submit` | Actually publish |
 
 **Markdown frontmatter support:**
 ```yaml
@@ -84,24 +102,6 @@ title: My Article Title
 subtitle: Optional subtitle
 cover: /path/to/cover.jpg
 ---
-```
-
-### `xpost reply` — Reply to Tweet
-
-```
-xpost reply <tweet_url> <text> [--submit]
-```
-
-| Argument/Option | Description |
-|----------------|-------------|
-| `tweet_url` | URL of the tweet to reply to |
-| `text` | Reply text content |
-| `--submit` | Actually publish |
-
-**Examples:**
-```bash
-xpost reply 'https://x.com/user/status/123' 'Great thread!'
-xpost reply 'https://x.com/user/status/123' 'Interesting' --submit
 ```
 
 ---

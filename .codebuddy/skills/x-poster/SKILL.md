@@ -1,6 +1,6 @@
 ---
 name: x-poster
-description: "X (Twitter) automation skill for posting and reading tweets via Chrome CDP. This skill should be used when the user wants to interact with X or Twitter, including posting tweets (text, images, video), quoting tweets, publishing long-form articles, reading individual tweets, browsing user timelines, or searching tweets. It operates through a real Chrome browser using the Chrome DevTools Protocol, requiring no API keys."
+description: "X (Twitter) automation skill for posting and reading tweets via Chrome CDP. This skill should be used when the user wants to interact with X or Twitter, including posting tweets (text, images, video), quoting tweets, replying to tweets, publishing long-form articles, reading individual tweets, browsing user timelines, or searching tweets. It operates through a real Chrome browser using the Chrome DevTools Protocol, requiring no API keys."
 ---
 
 # x-poster: X (Twitter) Automation Skill
@@ -99,7 +99,17 @@ xpost post 'Your tweet text here' -i /path/to/image.jpg
 xpost post 'Your tweet text here' -i /path/to/image.jpg --submit
 ```
 
-### Pattern 2: Read and Analyze Tweets
+### Pattern 2: Post a Video
+
+```bash
+# Preview
+xpost video 'Check this out' -V /path/to/clip.mp4
+
+# Submit
+xpost video 'Check this out' -V /path/to/clip.mp4 --submit
+```
+
+### Pattern 3: Read and Analyze Tweets
 
 ```bash
 # Read a specific tweet
@@ -114,7 +124,7 @@ xpost search 'keyword or phrase' -n 15 --latest --json
 
 When reading tweets for analysis, always use `--json` flag to get structured data that can be parsed programmatically.
 
-### Pattern 3: Reply to a Tweet
+### Pattern 4: Reply to a Tweet
 
 ```bash
 # Preview reply
@@ -134,7 +144,7 @@ xpost read 'https://x.com/user/status/123456'
 xpost quote 'https://x.com/user/status/123456' 'My commentary' --submit
 ```
 
-### Pattern 5: Publish an Article from Markdown
+### Pattern 6: Publish an Article from Markdown
 
 ```bash
 xpost article /path/to/article.md --title 'Article Title' --cover /path/to/cover.jpg --submit
@@ -179,6 +189,21 @@ For detailed command options and arguments, consult `references/command_referenc
 
 For troubleshooting common issues (Chrome startup, login, paste failures, DOM selector updates), consult `references/troubleshooting.md`.
 
+## Error Handling
+
+When a command fails:
+
+1. **Kill leftover Chrome processes** before retrying:
+   ```bash
+   pkill -f 'Chrome.*remote-debugging-port'
+   ```
+2. **Common errors and solutions**:
+   - `Chrome CDP port already in use` → Kill Chrome processes as above, then retry
+   - `Selector not found` / `TimeoutError` → Page may not have loaded; retry with `-v` for debug output
+   - `Accessibility permissions` → Instruct user to grant in System Settings → Privacy & Security → Accessibility
+   - `Login required` → Run any command without `--submit` first; user must log in manually in the Chrome window
+3. **Retry strategy**: Wait 2-3 seconds between retries. Maximum 2 retries before reporting the error to the user.
+
 ## Important Notes
 
 1. **Preview before submit**: Always run without `--submit` first to verify content is correct.
@@ -186,3 +211,4 @@ For troubleshooting common issues (Chrome startup, login, paste failures, DOM se
 3. **DOM changes**: X updates its interface frequently. If selectors break, check `references/troubleshooting.md` for the current selector list and update the source code accordingly.
 4. **macOS only**: This tool uses macOS-specific APIs (AppKit clipboard, osascript keystroke). It does not work on Linux or Windows.
 5. **Chrome profile**: The tool creates a dedicated Chrome profile. Do not use it simultaneously with the user's regular Chrome browsing.
+6. **Chrome cleanup**: Always kill leftover Chrome CDP processes if a previous command crashed or timed out.
