@@ -187,18 +187,32 @@ class PageHelper:
                 await asyncio.sleep(0.05)
 
     async def type_text(self, selector: str, text: str) -> None:
-        """Type text into an element using execCommand('insertText').
+        """Type text into an element.
 
-        This method focuses the element first, then uses insertText
-        which is compatible with contenteditable and input elements.
+        For text containing '#' or '@', uses CDP Input.insertText to
+        avoid triggering X's autocomplete popups. Otherwise uses
+        execCommand insertText for speed.
 
         Args:
             selector: CSS selector of the target element
             text: Text to insert
         """
         js_selector = selector.replace("'", "\\'")
-        escaped_text = text.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n")
 
+        # Focus the target element
+        await self.evaluate(
+            f"(() => {{"
+            f"  const el = document.querySelector('{js_selector}');"
+            f"  if (!el) throw new Error('Element not found: {js_selector}');"
+            f"  el.focus();"
+            f"}})()"
+        )
+
+        if '#' in text or '@' in text:
+            await self._insert_text_via_cdp(text)
+            return
+
+        escaped_text = text.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n")
         await self.evaluate(
             f"(() => {{"
             f"  const el = document.querySelector('{js_selector}');"
@@ -207,6 +221,64 @@ class PageHelper:
             f"  document.execCommand('insertText', false, '{escaped_text}');"
             f"}})()"
         )
+
+    async def _insert_text_via_cdp(self, text: str) -> None:
+        """Insert text using CDP Input.insertText.
+
+        This simulates IME-level text input which is atomic — X's editor
+        receives the complete text at once without triggering per-character
+        autocomplete popups for '#' or '@'.
+
+        Args:
+            text: Text to insert into the focused element
+        """
+        # Split by newlines: insertText handles plain text,
+        # but newlines need to be sent as Enter keypresses
+        parts = text.split('\n')
+        for i, part in enumerate(parts):
+            if part:
+                await self.cdp.send(
+                    "Input.insertText",
+                    {"text": part},
+                    session_id=self.session_id,
+                )
+            if i < len(parts) - 1:
+                await self.cdp.send(
+                    "Input.dispatchKeyEvent",
+                    {
+                        "type": "keyDown",
+                        "key": "Enter",
+                        "code": "Enter",
+                        "windowsVirtualKeyCode": 13,
+                    },
+                    session_id=self.session_id,
+                )
+                await self.cdp.send(
+                    "Input.dispatchKeyEvent",
+                    {
+                        "type": "keyUp",
+                        "key": "Enter",
+                        "code": "Enter",
+                        "windowsVirtualKeyCode": 13,
+                    },
+                    session_id=self.session_id,
+                )
+
+        # Dismiss any autocomplete popup that may still appear
+        await asyncio.sleep(0.3)
+        await self.cdp.send(
+            "Input.dispatchKeyEvent",
+            {"type": "keyDown", "key": "Escape", "code": "Escape", "windowsVirtualKeyCode": 27},
+            session_id=self.session_id,
+        )
+        await self.cdp.send(
+            "Input.dispatchKeyEvent",
+            {"type": "keyUp", "key": "Escape", "code": "Escape", "windowsVirtualKeyCode": 27},
+            session_id=self.session_id,
+        )
+        await asyncio.sleep(0.3)
+
+        logger.debug("Text inserted via CDP Input.insertText (%d chars)", len(text))
 
     async def upload_file(self, file_path: str, selector: str = 'input[type="file"]') -> None:
         """Upload a file by setting it on a file input element.

@@ -108,6 +108,22 @@ async def _run_reply(
         # Submit or preview
         if submit:
             click.echo("📤 Submitting reply...")
+
+            # Check if the tweet button is enabled before clicking
+            is_enabled = await page.evaluate("""
+                (() => {
+                    const btn = document.querySelector('[data-testid="tweetButton"]')
+                             || document.querySelector('[data-testid="tweetButtonInline"]');
+                    if (!btn) return 'not_found';
+                    return btn.disabled ? 'disabled' : 'enabled';
+                })()
+            """)
+            logger.debug("Tweet button state before click: %s", is_enabled)
+
+            if is_enabled == 'disabled':
+                click.echo("⚠️  Tweet button is disabled, waiting for editor to settle...")
+                await asyncio.sleep(2.0)
+
             # Try CDP click first, then JS click as fallback
             try:
                 await page.click_selector(TWEET_BUTTON)
