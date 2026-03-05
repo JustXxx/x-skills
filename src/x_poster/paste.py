@@ -40,9 +40,11 @@ def send_paste(
         RuntimeError: If paste fails after all retries
     """
     target_app = target_app or DEFAULT_TARGET_APP
+    # Escape double quotes in app name to prevent AppleScript injection
+    safe_app = target_app.replace("\\", "\\\\").replace('"', '\\"')
 
     script = f'''
-tell application "{target_app}"
+tell application "{safe_app}"
     activate
 end tell
 delay {pre_delay}
@@ -98,14 +100,17 @@ def send_key(
         target_app: App to activate first
     """
     target_app = target_app or DEFAULT_TARGET_APP
+    # Escape to prevent AppleScript injection
+    safe_app = target_app.replace("\\", "\\\\").replace('"', '\\"')
+    safe_key = key.replace("\\", "\\\\").replace('"', '\\"')
 
     if modifiers:
-        keystroke_line = f'keystroke "{key}" using {{{modifiers}}}'
+        keystroke_line = f'keystroke "{safe_key}" using {{{modifiers}}}'
     else:
-        keystroke_line = f'keystroke "{key}"'
+        keystroke_line = f'keystroke "{safe_key}"'
 
     script = f'''
-tell application "{target_app}"
+tell application "{safe_app}"
     activate
 end tell
 delay 0.2

@@ -21,15 +21,10 @@ from typing import Any, Dict, List, Optional
 import click
 
 from ..chrome import ChromeSession, launch_chrome
+from ..constants import LOGIN_INDICATOR, TWEET_ARTICLE, TWEET_TEXT, USER_NAME
 from ..page import PageHelper
 
 logger = logging.getLogger(__name__)
-
-# Selectors for tweet detail page
-TWEET_TEXT = '[data-testid="tweetText"]'
-USER_NAME = '[data-testid="User-Name"]'
-TWEET_ARTICLE = 'article[data-testid="tweet"]'
-LOGIN_INDICATOR = '[data-testid="loginButton"], [href="/login"]'
 
 
 def _normalize_url(url: str) -> str:

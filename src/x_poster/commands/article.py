@@ -22,6 +22,7 @@ import click
 
 from ..chrome import ChromeSession, launch_chrome
 from ..clipboard import copy_html, copy_image
+from ..constants import LOGIN_INDICATOR
 from ..markdown_converter import ParsedArticle, parse_markdown
 from ..page import PageHelper
 from ..paste import send_paste
@@ -35,7 +36,6 @@ ARTICLE_BODY = '[data-contents="true"], [contenteditable="true"]'
 COVER_UPLOAD_BUTTON = '[data-testid="addCoverPhoto"], [aria-label*="cover"], [aria-label*="Cover"]'
 COVER_APPLY_BUTTON = '[data-testid="applyButton"], [data-testid="confirmationSheetConfirm"]'
 PUBLISH_BUTTON = '[data-testid="publishButton"], [data-testid="tweetButton"]'
-LOGIN_INDICATOR = '[data-testid="loginButton"], [href="/login"]'
 WRITE_BUTTON = '[data-testid="write"], [href*="/compose/articles"]'
 
 

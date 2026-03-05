@@ -214,7 +214,7 @@ async def _probe_cdp_http(port: int, timeout: float = 2.0) -> Optional[Dict]:
             pass
         return None
 
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
     return await loop.run_in_executor(None, _do_request)
 
 

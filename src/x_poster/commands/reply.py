@@ -9,35 +9,16 @@ from __future__ import annotations
 
 import asyncio
 import logging
-import re
 from typing import Optional
 
 import click
 
 from ..chrome import ChromeSession, launch_chrome
+from ..constants import LOGIN_INDICATOR, REPLY_BUTTON, TWEET_BUTTON, TWEET_EDITOR
 from ..page import PageHelper
+from ..utils import normalize_tweet_url
 
 logger = logging.getLogger(__name__)
-
-TWEET_EDITOR = '[data-testid="tweetTextarea_0"]'
-TWEET_BUTTON = '[data-testid="tweetButton"], [data-testid="tweetButtonInline"]'
-REPLY_BUTTON = '[data-testid="reply"]'
-LOGIN_INDICATOR = '[data-testid="loginButton"], [href="/login"]'
-
-
-def _normalize_tweet_url(url: str) -> str:
-    """Normalize a tweet URL to ensure it's valid."""
-    url = url.strip()
-    if not url.startswith("http"):
-        url = "https://" + url
-    url = url.replace("twitter.com", "x.com")
-    pattern = r"https://x\.com/\w+/status/\d+"
-    if not re.match(pattern, url):
-        raise click.UsageError(
-            f"Invalid tweet URL: {url}\n"
-            "Expected format: https://x.com/username/status/1234567890"
-        )
-    return url
 
 
 async def _click_reply_on_tweet(page: PageHelper) -> None:
@@ -62,7 +43,7 @@ async def _run_reply(
     session: Optional[ChromeSession] = None
 
     try:
-        tweet_url = _normalize_tweet_url(tweet_url)
+        tweet_url = normalize_tweet_url(tweet_url)
 
         click.echo("🚀 Launching Chrome...")
         session = await launch_chrome(

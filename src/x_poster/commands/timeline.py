@@ -17,23 +17,12 @@ from typing import Any, Dict, List, Optional
 import click
 
 from ..chrome import ChromeSession, launch_chrome
+from ..constants import LOGIN_INDICATOR, TWEET_ARTICLE
 from ..page import PageHelper
-from .read import _extract_tweet_data, _format_tweet, LOGIN_INDICATOR, TWEET_ARTICLE
+from ..utils import normalize_profile_url
+from .read import _extract_tweet_data, _format_tweet
 
 logger = logging.getLogger(__name__)
-
-
-def _normalize_profile_url(url_or_handle: str) -> str:
-    """Normalize a profile URL or handle to full URL."""
-    s = url_or_handle.strip()
-    # Just a handle like @username or username
-    if not s.startswith("http"):
-        s = s.lstrip("@")
-        return f"https://x.com/{s}"
-    s = s.replace("twitter.com", "x.com")
-    if not s.startswith("https://"):
-        s = "https://" + s.lstrip("http://")
-    return s
 
 
 async def _scroll_and_collect(
@@ -115,7 +104,7 @@ async def _run_timeline(
     session: Optional[ChromeSession] = None
 
     try:
-        url = _normalize_profile_url(user_url)
+        url = normalize_profile_url(user_url)
         click.echo(f"🔍 Reading timeline: {url} (up to {count} tweets)")
 
         session = await launch_chrome(

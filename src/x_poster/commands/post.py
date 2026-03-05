@@ -19,15 +19,11 @@ import click
 
 from ..chrome import ChromeSession, launch_chrome
 from ..clipboard import copy_image
+from ..constants import LOGIN_INDICATOR, TWEET_BUTTON, TWEET_EDITOR
 from ..page import PageHelper
 from ..paste import send_paste
 
 logger = logging.getLogger(__name__)
-
-# X editor selectors
-TWEET_EDITOR = '[data-testid="tweetTextarea_0"]'
-TWEET_BUTTON = '[data-testid="tweetButton"], [data-testid="tweetButtonInline"]'
-LOGIN_INDICATOR = '[data-testid="loginButton"], [href="/login"]'
 BLOB_IMAGE = 'img[src^="blob:"]'
 
 

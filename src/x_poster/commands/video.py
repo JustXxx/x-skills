@@ -16,13 +16,11 @@ from typing import Optional
 import click
 
 from ..chrome import ChromeSession, launch_chrome
+from ..constants import LOGIN_INDICATOR, TWEET_BUTTON, TWEET_EDITOR
 from ..page import PageHelper
 
 logger = logging.getLogger(__name__)
 
-TWEET_EDITOR = '[data-testid="tweetTextarea_0"]'
-TWEET_BUTTON = '[data-testid="tweetButton"], [data-testid="tweetButtonInline"]'
-LOGIN_INDICATOR = '[data-testid="loginButton"], [href="/login"]'
 # File input for media upload
 FILE_INPUT = 'input[data-testid="fileInput"], input[type="file"][accept*="video"]'
 # Media toolbar button that triggers file input
@@ -60,7 +58,8 @@ async def _wait_for_video_ready(page: PageHelper, timeout: float = MAX_VIDEO_WAI
             raise RuntimeError(f"Video upload error: {error_text}")
 
         elapsed = time.monotonic() - start
-        if int(elapsed) % 10 == 0 and elapsed > 1:
+        # Show progress every ~10 seconds
+        if elapsed >= 10 and int(elapsed) // 10 != int(elapsed - 2) // 10:
             click.echo(f"  ⏳ Still processing... ({elapsed:.0f}s)")
 
         await asyncio.sleep(2.0)

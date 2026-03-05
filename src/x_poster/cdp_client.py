@@ -106,7 +106,7 @@ class CdpClient:
         if session_id:
             msg["sessionId"] = session_id
 
-        future: asyncio.Future = asyncio.get_event_loop().create_future()
+        future: asyncio.Future = asyncio.get_running_loop().create_future()
         self._pending[msg_id] = future
 
         try:

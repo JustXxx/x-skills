@@ -99,7 +99,6 @@ xpost article <markdown_file> [--title <title>] [--cover <image>] [-s/--submit]
 ```yaml
 ---
 title: My Article Title
-subtitle: Optional subtitle
 cover: /path/to/cover.jpg
 ---
 ```

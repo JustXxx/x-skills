@@ -9,21 +9,22 @@ from __future__ import annotations
 
 import asyncio
 import logging
-import re
 from typing import Optional
 
 import click
 
 from ..chrome import ChromeSession, launch_chrome
+from ..constants import (
+    LOGIN_INDICATOR,
+    RETWEET_BUTTON,
+    TWEET_BUTTON,
+    TWEET_EDITOR,
+    UNRETWEET_BUTTON,
+)
 from ..page import PageHelper
+from ..utils import normalize_tweet_url
 
 logger = logging.getLogger(__name__)
-
-TWEET_EDITOR = '[data-testid="tweetTextarea_0"]'
-RETWEET_BUTTON = '[data-testid="retweet"]'
-UNRETWEET_BUTTON = '[data-testid="unretweet"]'
-TWEET_BUTTON = '[data-testid="tweetButton"], [data-testid="tweetButtonInline"]'
-LOGIN_INDICATOR = '[data-testid="loginButton"], [href="/login"]'
 
 # Multi-language quote menu item text patterns
 QUOTE_PATTERNS = [
@@ -35,34 +36,6 @@ QUOTE_PATTERNS = [
     "zitieren",        # German
     "citer",           # French
 ]
-
-
-def _normalize_tweet_url(url: str) -> str:
-    """Normalize a tweet URL to ensure it's valid.
-
-    Accepts formats:
-    - https://x.com/user/status/123456
-    - https://twitter.com/user/status/123456
-    - x.com/user/status/123456
-    """
-    url = url.strip()
-
-    # Add scheme if missing
-    if not url.startswith("http"):
-        url = "https://" + url
-
-    # Convert twitter.com to x.com
-    url = url.replace("twitter.com", "x.com")
-
-    # Validate format
-    pattern = r"https://x\.com/\w+/status/\d+"
-    if not re.match(pattern, url):
-        raise click.UsageError(
-            f"Invalid tweet URL: {url}\n"
-            "Expected format: https://x.com/username/status/1234567890"
-        )
-
-    return url
 
 
 async def _click_quote_option(page: PageHelper, timeout: float = 10.0) -> None:
@@ -130,7 +103,7 @@ async def _run_quote(
     session: Optional[ChromeSession] = None
 
     try:
-        tweet_url = _normalize_tweet_url(tweet_url)
+        tweet_url = normalize_tweet_url(tweet_url)
 
         click.echo("🚀 Launching Chrome...")
         session = await launch_chrome(

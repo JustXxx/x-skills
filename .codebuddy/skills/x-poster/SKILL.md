@@ -134,7 +134,7 @@ xpost reply 'https://x.com/user/status/123456' 'Great point!'
 xpost reply 'https://x.com/user/status/123456' 'Great point!' --submit
 ```
 
-### Pattern 4: Quote Tweet with Commentary
+### Pattern 5: Quote Tweet with Commentary
 
 ```bash
 # First read the original tweet
@@ -150,9 +150,9 @@ xpost quote 'https://x.com/user/status/123456' 'My commentary' --submit
 xpost article /path/to/article.md --title 'Article Title' --cover /path/to/cover.jpg --submit
 ```
 
-The Markdown file supports YAML frontmatter for `title`, `subtitle`, and `cover`.
+The Markdown file supports YAML frontmatter for `title` and `cover`.
 
-### Pattern 6: Multi-Account Operations
+### Pattern 7: Multi-Account Operations
 
 Use `--profile` to switch between accounts:
 

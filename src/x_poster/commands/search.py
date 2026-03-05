@@ -18,8 +18,9 @@ from typing import Any, Dict, List, Optional
 import click
 
 from ..chrome import ChromeSession, launch_chrome
+from ..constants import LOGIN_INDICATOR, TWEET_ARTICLE
 from ..page import PageHelper
-from .read import _extract_tweet_data, _format_tweet, LOGIN_INDICATOR, TWEET_ARTICLE
+from .read import _extract_tweet_data, _format_tweet
 
 logger = logging.getLogger(__name__)
 
